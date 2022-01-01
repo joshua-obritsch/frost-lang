@@ -11,8 +11,10 @@ pub(crate) fn extract_op(s: &str) -> (&str, &str) {
   (&s[1..], &s[0..1])
 }
 
+const WHITESPACE: &[char] = &[' ', '\n'];
+
 pub(crate) fn extract_whitespace(s: &str) -> (&str, &str) {
-  take_while(|c| c == ' ', s)
+  take_while(|c| WHITESPACE.contains(&c), s)
 }
 
 pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
@@ -64,7 +66,11 @@ pub(crate) fn take_while1(
 }
 
 pub(crate) fn extract_whitespace1(s: &str) -> Result<(&str, &str), String> {
-  take_while1(|c| c == ' ', s, "expected a space".to_string())
+  take_while1(
+    |c| WHITESPACE.contains(&c),
+    s,
+    "expected whitespace".to_string(),
+  )
 }
 
 #[cfg(test)]
@@ -140,10 +146,15 @@ mod tests {
   }
 
   #[test]
+  fn extract_newlines_or_spaces() {
+    assert_eq!(extract_whitespace(" \n   \n\nabc"), ("abc", " \n   \n\n"));
+  }
+
+  #[test]
   fn do_not_extract_spaces1_when_input_does_not_start_with_them() {
     assert_eq!(
       extract_whitespace1("blah"),
-      Err("expected a space".to_string()),
+      Err("expected whitespace".to_string()),
     );
   }
 }

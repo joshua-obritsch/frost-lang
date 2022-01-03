@@ -22,8 +22,8 @@ alnum = alpha | digit
 
 ident = (alpha | "_") (alnum | "_")*
 
-int = digit+
+int = ("+" | "-")? digit+
 
-float = digit+ "." digit+
+float = ("+" | "-")? digit+ "." digit+
 
 string = "\"" .* "\""

@@ -14,7 +14,7 @@ pub(crate) enum SyntaxKind {
     #[token("fn")]
     FnKw,
 
-    #[regex("[A-Za-z][A-Za-z0-9]+")]
+    #[regex("[A-Za-z][A-Za-z0-9]*")]
     Ident,
 
     #[token("{")]

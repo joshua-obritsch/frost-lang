@@ -3,7 +3,7 @@ use num_derive::{FromPrimitive, ToPrimitive};
 
 #[derive(Clone, Copy, Debug, FromPrimitive, PartialEq, Logos, ToPrimitive)]
 pub(crate) enum SyntaxKind {
-    BinOp,
+    BinaryExpr,
 
     #[token("=")]
     Equals,
@@ -20,6 +20,9 @@ pub(crate) enum SyntaxKind {
     #[token("{")]
     LBrace,
 
+    #[token("(")]
+    LParen,
+
     #[token("let")]
     LetKw,
 
@@ -32,8 +35,13 @@ pub(crate) enum SyntaxKind {
     #[token("+")]
     Plus,
 
+    PrefixExpr,
+
     #[token("}")]
     RBrace,
+
+    #[token(")")]
+    RParen,
 
     Root,
 
@@ -148,5 +156,20 @@ mod tests {
     #[test]
     fn lex_right_brace() {
         check("}", SyntaxKind::RBrace);
+    }
+
+    #[test]
+    fn lex_single_char_identifier() {
+        check("x", SyntaxKind::Ident);
+    }
+
+    #[test]
+    fn lex_left_parenthesis() {
+        check("(", SyntaxKind::LParen);
+    }
+
+    #[test]
+    fn lex_right_parenthesis() {
+        check(")", SyntaxKind::RParen);
     }
 }

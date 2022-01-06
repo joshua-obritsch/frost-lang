@@ -67,7 +67,7 @@ impl Parse {
         let syntax_node = SyntaxNode::new_root(self.green_node.clone());
         let formatted = format!("{:#?}", syntax_node);
 
-        formatted[0..formatted.len() - 1].to_string()
+        formatted[0..formatted.len()].to_string()
     }
 }
 
@@ -85,6 +85,11 @@ mod tests {
 
     #[test]
     fn parse_nothing() {
-        check("", expect![[r#"Root@0..0"#]]);
+        check(
+            "",
+            expect![[r#"
+                Root@0..0
+            "#]],
+        );
     }
 }

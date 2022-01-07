@@ -118,4 +118,15 @@ mod tests {
             "#]],
         );
     }
+
+    #[test]
+    fn parse_comment() {
+        check(
+            "# hello!",
+            expect![[r##"
+                Root@0..8
+                  Comment@0..8 "# hello!"
+            "##]],
+        );
+    }
 }

@@ -5,6 +5,9 @@ use num_derive::{FromPrimitive, ToPrimitive};
 pub(crate) enum SyntaxKind {
     BinaryExpr,
 
+    #[regex("#.*")]
+    Comment,
+
     #[token("=")]
     Equals,
 
@@ -51,7 +54,7 @@ pub(crate) enum SyntaxKind {
     #[token("*")]
     Star,
 
-    #[regex(" +")]
+    #[regex("[ \n]+")]
     Whitespace,
 }
 
@@ -177,5 +180,21 @@ mod tests {
     #[test]
     fn lex_right_parenthesis() {
         check(")", SyntaxKind::RParen);
+    }
+
+    #[test]
+    fn lex_comment() {
+        check("# foo", SyntaxKind::Comment);
+    }
+
+    #[test]
+    fn lex_spaces_and_newlines() {
+        check("  \n ", SyntaxKind::Whitespace);
+    }
+}
+
+impl SyntaxKind {
+    pub(crate) fn is_trivia(self) -> bool {
+        matches!(self, Self::Whitespace | Self::Comment)
     }
 }

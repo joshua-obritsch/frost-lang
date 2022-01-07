@@ -1,6 +1,7 @@
 mod event;
 mod expr;
 mod sink;
+mod source;
 
 use crate::lexer::{Lexeme, Lexer, SyntaxKind};
 use crate::syntax::SyntaxNode;
@@ -8,19 +9,18 @@ use event::Event;
 use expr::expr;
 use rowan::GreenNode;
 use sink::Sink;
+use source::Source;
 
 struct Parser<'l, 'input> {
-    cursor: usize,
     events: Vec<Event>,
-    lexemes: &'l [Lexeme<'input>],
+    source: Source<'l, 'input>,
 }
 
 impl<'l, 'input> Parser<'l, 'input> {
     pub fn new(lexemes: &'l [Lexeme<'input>]) -> Self {
         Self {
-            cursor: 0,
             events: Vec::new(),
-            lexemes,
+            source: Source::new(lexemes),
         }
     }
 
@@ -45,19 +45,16 @@ impl<'l, 'input> Parser<'l, 'input> {
     }
 
     fn bump(&mut self) {
-        let Lexeme { kind, text } = self.lexemes[self.cursor];
+        let Lexeme { kind, text } = self.source.next_lexeme().unwrap();
 
-        self.cursor += 1;
         self.events.push(Event::AddToken {
-            kind,
-            text: text.into(),
+            kind: *kind,
+            text: (*text).into(),
         });
     }
 
     fn peek(&mut self) -> Option<SyntaxKind> {
-        self.lexemes
-            .get(self.cursor)
-            .map(|Lexeme { kind, .. }| *kind)
+        self.source.peek_kind()
     }
 
     fn checkpoint(&self) -> usize {
@@ -107,6 +104,17 @@ mod tests {
             "",
             expect![[r#"
                 Root@0..0
+            "#]],
+        );
+    }
+
+    #[test]
+    fn parse_whitespace() {
+        check(
+            "   ",
+            expect![[r#"
+                Root@0..3
+                  Whitespace@0..3 "   "
             "#]],
         );
     }

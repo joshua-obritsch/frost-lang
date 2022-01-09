@@ -3,10 +3,10 @@ use num_derive::{FromPrimitive, ToPrimitive};
 
 #[derive(Clone, Copy, Debug, FromPrimitive, PartialEq, Logos, ToPrimitive)]
 pub(crate) enum SyntaxKind {
+    BinaryExpr,
+
     #[regex("#.*")]
     Comment,
-
-    BinaryExpr,
 
     #[token("=")]
     Equals,
